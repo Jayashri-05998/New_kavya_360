@@ -10,7 +10,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final String[] allowedOrigins;
 
-    public WebMvcConfig(@Value("${app.cors.allowed-origins:http://localhost:5173}") String[] allowedOrigins) {
+    public WebMvcConfig(
+            @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000,http://localhost:3001,https://kavyaproman.netlify.app}") String[] allowedOrigins
+    ) {
         this.allowedOrigins = allowedOrigins;
     }
 
