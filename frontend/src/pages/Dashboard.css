@@ -69,10 +69,10 @@
 /* floating toggle button when collapsed */
 .floating-toggle{position:fixed;left:12px;top:12px;z-index:2000;background:#0d6efd;color:#fff;border:none;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(13,110,253,0.18)}
 .floating-toggle:hover{opacity:0.95}
-.mobile-toggle{display:none;position:fixed;right:14px;top:12px;z-index:2001;background:#0d6efd;color:#fff;border:none;width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(13,110,253,0.18)}
+.mobile-toggle{display:none;position:fixed;right:14px;top:12px;z-index:2001;background:#0d6efd;color:#fff;border:none;width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(13,110,253,0.18)}
 .mobile-toggle svg{
-  width:32px;
-  height:32px;
+  width:19px;
+  height:19px;
   stroke-width:2.6px;
 }
 .mobile-toggle:hover{opacity:0.95}
@@ -105,7 +105,7 @@
 
   /* bell and red dot spacing */
   .bell-black{color:#000;position:relative;margin-left:8px;margin-right:6px}
-  .bell-black.has-unread::after{content:'';width:8px;height:8px;border-radius:50%;background:#ff3b30;position:absolute;right:-6px;top:-6px;box-shadow:0 0 0 4px rgba(255,59,48,0.12)}
+  .bell-black.has-unread::after{content:none !important;display:none !important}
 
   /* create button kept visible and compact to fit the row */
   .create-issue-medium{min-width:140px;padding:8px 12px;font-size:14px;border-radius:8px;background:#05060a;color:#fff;border:none;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
@@ -114,6 +114,15 @@
 /* Mobile overlay and open class to control sidebar on small screens */
 @media(max-width:992px){
   .sidebar.open{transform:translateX(0) !important}
+  .sidebar.collapsed,
+  .sidebar.collapsed.open{
+    transform:translateX(-100%) !important;
+    left:-320px !important;
+  }
+  .sidebar:not(.collapsed){
+    transform:translateX(0) !important;
+    left:0 !important;
+  }
   .mobile-overlay{display:none}
   .mobile-overlay.show{display:block;position:fixed;inset:0;background:rgba(2,6,23,0.45);z-index:1040}
   .menu-toggle{display:inline-flex}
@@ -146,7 +155,7 @@
 
 /* Bell with red notification dot */
 .bell-black{color:#fff !important;position:relative}
-.bell-black.has-unread::after{content:'';width:8px;height:8px;border-radius:50%;background:#ff3b30;position:absolute;right:-6px;top:-6px;box-shadow:0 0 0 4px rgba(255,59,48,0.12)}
+.bell-black.has-unread::after{content:none !important;display:none !important}
 html[data-theme='dark'] .bell-black,
 html[data-theme='dark'] .bell-black svg{
   color:#ffffff !important;

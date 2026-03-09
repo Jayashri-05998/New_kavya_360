@@ -19,13 +19,11 @@ import ContactSales from './pages/ContactSales'
 import Project from './pages/Project'
 import Board from './pages/Board'
 import Backlog from './pages/Backlog'
-import SidebarController from './components/SidebarController'
 
 function App() {
   const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null
   return (
     <BrowserRouter>
-      <SidebarController />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

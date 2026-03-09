@@ -165,11 +165,13 @@ const Reports = () => {
   };
 
   const toggleSidebarForScreen = () => {
-    if (typeof window !== "undefined" && window.innerWidth >= 992) {
-      setCollapsed(prev => !prev);
-    } else {
-      setMobileOpen(prev => !prev);
-    }
+    setCollapsed(prev => {
+      const next = !prev;
+      if (typeof window !== "undefined" && window.innerWidth < 992) {
+        setMobileOpen(!next);
+      }
+      return next;
+    });
   };
 
   const isMobileScreen = () => typeof window !== "undefined" && window.innerWidth <= 768;
@@ -242,7 +244,7 @@ const Reports = () => {
         <FiMenu size={18} />
       </button>
 
-      <div className={`mobile-overlay ${mobileOpen ? "show" : ""}`} onClick={() => setMobileOpen(false)} />
+      <div className={`mobile-overlay ${mobileOpen ? "show" : ""}`} onClick={() => { setMobileOpen(false); setCollapsed(true); }} />
 
       {/* ===== MAIN CONTENT ===== */}
       <main className="content flex-grow-1 p-4">

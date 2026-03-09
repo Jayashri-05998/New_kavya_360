@@ -173,11 +173,13 @@ export default function AllMyIssues(){
   }
 
   function toggleSidebarForScreen() {
-    if (typeof window !== 'undefined' && window.innerWidth >= 992) {
-      setCollapsed(s => !s)
-    } else {
-      setMobileOpen(s => !s)
-    }
+    setCollapsed((prev) => {
+      const next = !prev
+      if (typeof window !== 'undefined' && window.innerWidth < 992) {
+        setMobileOpen(!next)
+      }
+      return next
+    })
   }
 
   return (
@@ -256,11 +258,11 @@ export default function AllMyIssues(){
       )}
 
       {/* single toggle button handles large and small screens */}
-      <button className="mobile-toggle btn btn-sm" aria-label="Toggle sidebar">
+      <button className="mobile-toggle btn btn-sm" onClick={toggleSidebarForScreen} aria-label="Toggle sidebar">
         <FiMenu size={18} />
       </button>
 
-      <div className={`mobile-overlay ${mobileOpen ? 'show' : ''}`} onClick={() => setMobileOpen(false)} />
+      <div className={`mobile-overlay ${mobileOpen ? 'show' : ''}`} onClick={() => { setMobileOpen(false); setCollapsed(true) }} />
 
       <main className={`content flex-grow-1 p-4 ${collapsed ? 'with-topbar' : ''}`}>
         <div style={{display:'flex',alignItems:'center',gap:12,marginTop:70}}>

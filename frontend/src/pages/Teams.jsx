@@ -256,11 +256,13 @@ export default function Teams() {
   }
 
   function toggleSidebarForScreen() {
-    if (typeof window !== 'undefined' && window.innerWidth >= 992) {
-      setCollapsed(s => !s)
-    } else {
-      setMobileOpen(s => !s)
-    }
+    setCollapsed((prev) => {
+      const next = !prev
+      if (typeof window !== 'undefined' && window.innerWidth < 992) {
+        setMobileOpen(!next)
+      }
+      return next
+    })
   }
 
   function isMobileScreen() {
@@ -348,11 +350,11 @@ export default function Teams() {
       {/* removed separate floating toggle; single toggle button below handles both sizes */}
 
       {/* Mobile Toggle (also toggles collapsed on large screens) */}
-      <button className="mobile-toggle btn btn-sm" aria-label="Toggle sidebar">
+      <button className="mobile-toggle btn btn-sm" onClick={toggleSidebarForScreen} aria-label="Toggle sidebar">
         <FiMenu size={18} />
       </button>
 
-      <div className={`mobile-overlay ${mobileOpen ? 'show' : ''}`} onClick={() => setMobileOpen(false)} />
+      <div className={`mobile-overlay ${mobileOpen ? 'show' : ''}`} onClick={() => { setMobileOpen(false); setCollapsed(true) }} />
 
       {/* Main Content */}
       <main className={`content flex-grow-1 p-4 ${collapsed ? 'with-topbar' : ''}`}>

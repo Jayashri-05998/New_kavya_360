@@ -1,71 +1,100 @@
-/* ============ Tab Navigation ============ */
-.settings-tabs-container {
+.settings-page {
+  --settings-surface: #ffffff;
+  --settings-border: #e5e7eb;
+  --settings-muted: #6b7280;
+  --settings-text: #111827;
+  --settings-bg-soft: #f8fafc;
+  --settings-brand: #0d6efd;
+  --settings-brand-soft: #eef6ff;
+  --settings-danger: #dc2626;
+}
+
+.settings-page .dash-header {
+  padding: 0;
+}
+
+.settings-page .dash-header h1 {
+  margin-bottom: 6px;
+  color: var(--settings-text);
+}
+
+.settings-page .settings-tabs-container {
   display: flex;
   justify-content: flex-start;
 }
 
-.settings-tabs {
+.settings-page .settings-tabs {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
 }
 
-.tab-pill {
+.settings-page .tab-pill {
   background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--settings-border);
   padding: 10px 20px;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--settings-muted);
   cursor: pointer;
   border-radius: 24px;
   transition: all 0.2s ease;
   font-size: 14px;
 }
 
-.tab-pill:hover {
+.settings-page .tab-pill:hover {
   background: #e5e7eb;
   border-color: #d1d5db;
 }
 
-.tab-pill.active {
-  background: #0d6efd;
-  border-color: #0d6efd;
+.settings-page .tab-pill.active {
+  background: var(--settings-brand);
+  border-color: var(--settings-brand);
   color: #fff;
   box-shadow: 0 2px 8px rgba(13, 110, 253, 0.2);
 }
 
-/* ============ Settings Content ============ */
-.settings-content {
+.settings-page .settings-content {
   padding: 0;
 }
 
-.settings-card {
-  background: #fff;
+.settings-page .settings-card {
+  background: var(--settings-surface);
   padding: 28px;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(15, 23, 36, 0.03);
   border: 1px solid #f0f1f3;
 }
 
-.card-header {
-  margin-bottom: 28px;
+.settings-page .card-header {
+  margin-bottom: 24px;
   padding-bottom: 20px;
+  border-bottom: 1px solid var(--settings-border);
 }
 
-.card-header h2 {
+.settings-page .card-header h2 {
   font-size: 20px;
   font-weight: 700;
-  color: #111827;
+  color: var(--settings-text);
   margin: 0 0 8px 0;
 }
 
-.card-header p {
+.settings-page .card-header p {
   margin: 0;
   font-size: 14px;
+  color: var(--settings-muted);
 }
 
-/* ============ Avatar Section ============ */
-.avatar-section .avatar-preview {
+.settings-page .avatar-section {
+  border-bottom: 1px solid var(--settings-border);
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+
+.settings-page .avatar-input {
+  display: none;
+}
+
+.settings-page .avatar-section .avatar-preview {
   width: 64px;
   height: 64px;
   min-width: 64px;
@@ -81,17 +110,17 @@
   overflow: hidden;
 }
 
-.avatar-section .avatar-preview img {
+.settings-page .avatar-section .avatar-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.avatar-section .avatar-preview.clickable {
+.settings-page .avatar-section .avatar-preview.clickable {
   cursor: pointer;
 }
 
-.avatar-viewer-overlay {
+.settings-page .avatar-viewer-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.72);
@@ -102,7 +131,7 @@
   padding: 20px;
 }
 
-.avatar-viewer-content {
+.settings-page .avatar-viewer-content {
   max-width: 90vw;
   max-height: 90vh;
   display: flex;
@@ -111,24 +140,24 @@
   position: relative;
 }
 
-.avatar-viewer-content img {
+.settings-page .avatar-viewer-content img {
   max-width: 100%;
   max-height: 75vh;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--settings-border);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
-.avatar-viewer-close {
+.settings-page .avatar-viewer-close {
   position: absolute;
   top: -12px;
   right: -12px;
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--settings-border);
   background: #ffffff;
-  color: #111827;
+  color: var(--settings-text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -136,8 +165,16 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
-/* ============ Form Styling ============ */
-.form-label {
+.settings-page .form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.settings-page .form-row .form-group {
+  flex: 1;
+}
+
+.settings-page .form-label {
   font-weight: 600;
   color: #374151;
   font-size: 14px;
@@ -145,8 +182,8 @@
   display: block;
 }
 
-.form-control {
-  border: 1px solid #e5e7eb;
+.settings-page .form-control {
+  border: 1px solid var(--settings-border);
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 14px;
@@ -155,98 +192,78 @@
   transition: all 0.2s ease;
 }
 
-.form-control:focus {
-  border-color: #0d6efd;
+.settings-page .form-control:focus {
+  border-color: var(--settings-brand);
   box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.08);
   outline: none;
 }
 
-.form-control::placeholder {
+.settings-page .form-control::placeholder {
   color: #9ca3af;
 }
 
-.form-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 0;
-}
-
-/* ============ Button Styling ============ */
-.btn {
+.settings-page .btn {
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
   padding: 10px 18px;
-  border: none;
   transition: all 0.2s ease;
-  cursor: pointer;
 }
 
-.btn-primary {
-  background: #0d6efd;
-  color: #fff;
-}
-
-.btn-primary:hover {
-  background: #0b5ed7;
-  color: #fff;
-}
-
-.btn-dark {
-  background: #1f2937;
-  color: #fff;
-}
-
-.btn-dark:hover {
+.settings-page .btn-dark {
   background: #111827;
+  color: #fff;
+  border: 1px solid #111827;
 }
 
-.btn-outline-secondary {
+.settings-page .btn-dark:hover {
+  background: #030712;
+  border-color: #030712;
+}
+
+.settings-page .btn-outline-secondary {
   border: 1px solid #d1d5db;
   background: #fff;
   color: #6b7280;
 }
 
-.btn-outline-secondary:hover {
+.settings-page .btn-outline-secondary:hover {
   background: #f3f4f6;
   border-color: #9ca3af;
 }
 
-.btn-outline-danger {
+.settings-page .btn-outline-danger {
   border: 1px solid #f87171;
   background: #fff;
-  color: #dc2626;
-  font-weight: 600;
+  color: var(--settings-danger);
 }
 
-.btn-outline-danger:hover {
+.settings-page .btn-outline-danger:hover {
   background: #fee2e2;
-  border-color: #dc2626;
+  border-color: var(--settings-danger);
 }
 
-/* ============ Notifications List ============ */
-.notifications-list {
+.settings-page .notifications-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.notification-item {
+.settings-page .notification-item {
   padding: 16px;
   background: #f9fafb;
   border-radius: 8px;
   border: 1px solid #f0f1f3;
 }
 
-.notification-item .notif-label {
+.settings-page .notification-item .notif-label {
   font-weight: 600;
   color: #374151;
   font-size: 14px;
   margin: 0;
 }
 
-/* ============ Toggle Switch ============ */
-.toggle-switch {
+.settings-page .toggle-switch {
   position: relative;
   width: 48px;
   height: 28px;
@@ -259,11 +276,11 @@
   padding: 2px;
 }
 
-.toggle-switch.active {
-  background: #0d6efd;
+.settings-page .toggle-switch.active {
+  background: var(--settings-brand);
 }
 
-.toggle-slider {
+.settings-page .toggle-slider {
   width: 24px;
   height: 24px;
   background: #fff;
@@ -272,30 +289,149 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.toggle-switch.active .toggle-slider {
+.settings-page .toggle-switch.active .toggle-slider {
   transform: translateX(20px);
 }
 
-.toggle-input {
+.settings-page .toggle-input {
   display: none;
 }
 
-/* ============ Alert ============ */
-.alert {
+.settings-page .alert {
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 14px;
-  border: none;
+  border: 1px solid transparent;
 }
 
-.alert-danger {
+.settings-page .alert-danger {
   background: #fee2e2;
   color: #991b1b;
-  border: 1px solid #fca5a5;
+  border-color: #fca5a5;
 }
 
-/* ============ QR Code Section ============ */
-.qr-code-section {
+.settings-page .verify-row {
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.settings-page .verify-btn {
+  background: #fff;
+  border: 1px solid #111827;
+  color: #111827;
+  border-radius: 8px;
+  font-weight: 700;
+  padding: 10px 14px;
+}
+
+.settings-page .verify-btn:hover {
+  background: #111827;
+  color: #fff;
+}
+
+.settings-page .verify-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.settings-page .code-sent-msg {
+  color: #065f46;
+  font-weight: 600;
+}
+
+.settings-page .otp-row {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.settings-page .otp-box-wrap {
+  position: relative;
+}
+
+.settings-page .otp-box {
+  width: 48px;
+  height: 52px;
+  border: 1px solid var(--settings-border);
+  border-radius: 10px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--settings-text);
+  outline: none;
+}
+
+.settings-page .otp-box:focus {
+  border-color: var(--settings-brand);
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.08);
+}
+
+.settings-page .otp-clear {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 50%;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-page .verify-code-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.settings-page .verified-badge {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 10px;
+}
+
+.settings-page .new-password-group {
+  margin-top: 14px;
+}
+
+.settings-page .password-wrapper {
+  position: relative;
+}
+
+.settings-page .password-wrapper .form-control {
+  padding-right: 42px;
+}
+
+.settings-page .password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-page .password-toggle:hover {
+  color: #111827;
+}
+
+.settings-page .qr-code-section {
   padding: 20px;
   background: #f9fafb;
   border-radius: 8px;
@@ -303,78 +439,148 @@
   margin-bottom: 20px;
 }
 
-.qr-placeholder {
+.settings-page .qr-placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
 }
 
-.qr-code-box {
+.settings-page .qr-code-box {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 140px;
   height: 140px;
   background: #fff;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--settings-border);
   border-radius: 8px;
   margin-bottom: 8px;
 }
 
-.qr-code-box svg {
+.settings-page .qr-code-box svg {
   width: 120px;
   height: 120px;
 }
 
-.qr-placeholder p {
+.settings-page .qr-placeholder p {
   font-size: 13px;
-  color: #6b7280;
+  color: var(--settings-muted);
   text-align: center;
   margin: 0;
 }
 
-/* ============ Responsive ============ */
 @media (max-width: 768px) {
-  .form-row {
+  .settings-page .settings-card {
+    padding: 20px;
+  }
+
+  .settings-page .form-row {
     flex-direction: column;
     gap: 0;
   }
 
-  .form-row .form-group {
-    margin-right: 0 !important;
-  }
-
-  .settings-card {
-    padding: 20px;
-  }
-
-  .tab-pill {
-    padding: 8px 16px;
+  .settings-page .tab-pill {
+    padding: 8px 14px;
     font-size: 13px;
   }
+
+  .settings-page .avatar-section .ms-3,
+  .settings-page .avatar-section .ms-2 {
+    margin-left: 0 !important;
+  }
+
+  .settings-page .verify-code-row,
+  .settings-page .verify-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 
-/* ============ Dark Theme Overrides ============ */
-html[data-theme='dark'] .settings-tabs-container {
-  background: transparent;
-}
-
-html[data-theme='dark'] .tab-pill {
+html[data-theme='dark'] .settings-page .tab-pill {
   background: #1f2937;
   border-color: #374151;
-  color: #e5e7eb !important;
+  color: #e5e7eb;
 }
 
-html[data-theme='dark'] .tab-pill:hover {
+html[data-theme='dark'] .settings-page .tab-pill:hover {
   background: #273449;
   border-color: #4b5563;
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
-html[data-theme='dark'] .tab-pill.active {
+html[data-theme='dark'] .settings-page .tab-pill.active {
   background: #2563eb;
   border-color: #2563eb;
-  color: #ffffff !important;
+  color: #ffffff;
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+
+html[data-theme='dark'] .settings-page .settings-card,
+html[data-theme='dark'] .settings-page .notification-item,
+html[data-theme='dark'] .settings-page .qr-code-section,
+html[data-theme='dark'] .settings-page .form-control,
+html[data-theme='dark'] .settings-page .otp-box {
+  background: #0f172a;
+  border-color: #1f2937;
+  color: #e5e7eb;
+}
+
+html[data-theme='dark'] .settings-page .card-header,
+html[data-theme='dark'] .settings-page .avatar-section {
+  border-color: #1f2937;
+}
+
+html[data-theme='dark'] .settings-page .card-header h2,
+html[data-theme='dark'] .settings-page .form-label,
+html[data-theme='dark'] .settings-page .notif-label,
+html[data-theme='dark'] .settings-page .dash-header h1 {
+  color: #ffffff;
+}
+
+html[data-theme='dark'] .settings-page .card-header p,
+html[data-theme='dark'] .settings-page .qr-placeholder p,
+html[data-theme='dark'] .settings-page .text-muted,
+html[data-theme='dark'] .settings-page .password-toggle {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme='dark'] .settings-page .form-control::placeholder {
+  color: #94a3b8;
+}
+
+html[data-theme='dark'] .settings-page .verify-btn {
+  background: #020617;
+  border-color: #334155;
+  color: #ffffff;
+}
+
+html[data-theme='dark'] .settings-page .verify-btn:hover {
+  background: #111827;
+}
+
+html[data-theme='dark'] .settings-page .btn-dark {
+  background: #020617;
+  border-color: #334155;
+}
+
+html[data-theme='dark'] .settings-page .btn-dark:hover {
+  background: #111827;
+}
+
+html[data-theme='dark'] .settings-page .btn-outline-secondary,
+html[data-theme='dark'] .settings-page .avatar-viewer-close {
+  background: #020617;
+  border-color: #334155;
+  color: #e5e7eb;
+}
+
+html[data-theme='dark'] .settings-page .btn-outline-secondary:hover {
+  background: #0f172a;
+}
+
+html[data-theme='dark'] .settings-page .verified-badge {
+  background: rgba(22, 163, 74, 0.2);
+  border-color: rgba(34, 197, 94, 0.35);
+  color: #86efac;
 }
