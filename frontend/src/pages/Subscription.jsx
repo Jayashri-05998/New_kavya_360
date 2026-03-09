@@ -89,11 +89,13 @@ export default function Subscription() {
   }, [])
 
   function toggleSidebarForScreen() {
-    if (typeof window !== 'undefined' && window.innerWidth >= 992) {
-      setCollapsed(s => !s)
-    } else {
-      setMobileOpen(s => !s)
-    }
+    setCollapsed((prev) => {
+      const next = !prev
+      if (typeof window !== 'undefined' && window.innerWidth < 992) {
+        setMobileOpen(!next)
+      }
+      return next
+    })
   }
 
   return (
@@ -159,12 +161,12 @@ export default function Subscription() {
       </aside>
 
       {/* mobile toggle button (same as Dashboard) */}
-      <button className="mobile-toggle btn btn-sm" aria-label="Toggle sidebar">
+      <button className="mobile-toggle btn btn-sm" onClick={toggleSidebarForScreen} aria-label="Toggle sidebar">
         <FiMenu size={18} />
       </button>
 
       <main className={`content flex-grow-1 p-4 ${collapsed ? 'with-topbar' : ''}`}>
-        <div className={`mobile-overlay ${mobileOpen ? 'show' : ''}`} onClick={() => setMobileOpen(false)} />
+        <div className={`mobile-overlay ${mobileOpen ? 'show' : ''}`} onClick={() => { setMobileOpen(false); setCollapsed(true) }} />
         <div className="main-body">
           <header className="dash-header mb-4">
             <div>

@@ -100,8 +100,8 @@ export default function Login() {
         <button className="auth-btn" type="submit">Sign In</button>
         <div className="divider">Or continue with</div>
         <div className="auth-socials">
-          <button className="social">Google</button>
-          <button className="social">GitHub</button>
+          <button className="social mt-2">Google</button>
+          <button className="social mt-2">GitHub</button>
         </div>
         <div className="auth-foot">Don't have an account? <a href="/register">Sign up</a></div>
       </form>

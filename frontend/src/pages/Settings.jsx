@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   FiGrid,
   FiFolder,
@@ -9,23 +9,9 @@ import {
   FiSettings,
   FiLogOut,
   FiMenu,
-  FiSearch,
-  FiBell,
-  FiPlus,
   FiUser,
-  FiShare2,
-  FiDownload,
-  FiTrash2,
-  FiFilter,
-  FiBookmark,
-  FiClock,
   FiRepeat,
   FiArrowRight,
-  FiUpload,
-  FiAlignLeft,
-  FiAlignCenter,
-  FiAlignRight,
-  FiAlignJustify,
   FiX
 } from 'react-icons/fi'
 import './Settings.css'
@@ -33,6 +19,7 @@ import './Dashboard.css'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 export default function Settings() {
+  const API_BASE = (import.meta && import.meta.env && import.meta.env.VITE_API_BASE) || 'http://localhost:8080'
   // basic UI state
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -49,20 +36,33 @@ export default function Settings() {
     return () => window.removeEventListener('org:changed', onOrgChanged)
   }, [])
 
+  // sync sidebar state from global controller
+  useEffect(() => {
+    function sync(e){
+      const d = e.detail || {}
+      if (typeof d.collapsed === 'boolean') setCollapsed(d.collapsed)
+      if (typeof d.open === 'boolean') setMobileOpen(d.open)
+    }
+    window.addEventListener('sidebar:state', sync)
+    return () => window.removeEventListener('sidebar:state', sync)
+  }, [])
+
 const user = JSON.parse(localStorage.getItem('user') || 'null')
 const displayName = user?.name || (user?.email ? user.email.split('@')[0] : 'Guest')
-  const handleLogout = () => {
-    // TODO: wire up real logout logic
-    console.log('logout clicked')
-    navigate('/login')
-  }
 
   function toggleSidebarForScreen() {
-    if (typeof window !== 'undefined' && window.innerWidth >= 992) {
-      setCollapsed(s => !s)
-    } else {
-      setMobileOpen(s => !s)
-    }
+    setCollapsed((prev) => {
+      const next = !prev
+      if (typeof window !== 'undefined' && window.innerWidth < 992) {
+        setMobileOpen(!next)
+      }
+      return next
+    })
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('user')
+    navigate('/login', { replace: true })
   }
 
   return (
@@ -146,15 +146,15 @@ const displayName = user?.name || (user?.email ? user.email.split('@')[0] : 'Gue
       )}
 
       {/* mobile toggle (visible on small/medium screens) */}
-      <button className="mobile-toggle btn btn-sm" onClick={toggleSidebarForScreen} aria-label="Toggle sidebar">
+      <button className="mobile-toggle btn btn-sm" aria-label="Toggle sidebar" onClick={toggleSidebarForScreen}>
         <FiMenu size={18} />
       </button>
 
-      <div className={`mobile-overlay ${mobileOpen ? 'show' : ''}`} onClick={() => setMobileOpen(false)} />
+      <div className={`mobile-overlay ${mobileOpen ? 'show' : ''}`} onClick={() => { setMobileOpen(false); setCollapsed(true) }} />
 
             {/*sidebar end  */}
 
-      <main className={`content flex-grow-1 p-4 ${collapsed ? 'with-topbar' : ''}`}>
+      <main className={`content flex-grow-1 p-4 settings-page ${collapsed ? 'with-topbar' : ''}`}>
         <header className="dash-header mb-4">
           <h1>Settings</h1>
           <p className="text-muted">Manage your account and application preferences</p>
@@ -193,7 +193,7 @@ const displayName = user?.name || (user?.email ? user.email.split('@')[0] : 'Gue
           {activeTab === 'profile' && <ProfileSection />}
           {activeTab === 'notifications' && <NotificationsSection />}
           {activeTab === 'appearance' && <AppearanceSection />}
-          {activeTab === 'security' && <SecuritySection />}
+          {activeTab === 'security' && <SecuritySection apiBase={API_BASE} />}
         </div>
       </main>
     </div>
@@ -308,7 +308,7 @@ function ProfileSection() {
         <p className="text-muted">Manage your personal information</p>
       </div>
 
-      <div className="avatar-section d-flex align-items-center mb-4 pb-4" style={{ borderBottom: '1px solid #e5e7eb' }}>
+      <div className="avatar-section d-flex align-items-center mb-4 pb-4">
         <div
           className={`avatar-preview ${avatar ? 'clickable' : ''}`}
           onClick={handleAvatarPreview}
@@ -323,10 +323,10 @@ function ProfileSection() {
           Remove Avatar
         </button>
         <input
+          className="avatar-input"
           ref={fileInputRef}
           type="file"
           accept="image/png,image/jpeg,image/gif"
-          style={{ display: 'none' }}
           onChange={handleAvatarUpload}
         />
         <small className="ms-3 text-muted">JPG, PNG or GIF. Max size 2MB</small>
@@ -353,7 +353,7 @@ function ProfileSection() {
       )}
 
       <div className="form-row">
-        <div className="form-group mb-3" style={{ flex: 1, marginRight: '12px' }}>
+        <div className="form-group mb-3">
           <label className="form-label">First Name</label>
           <input 
             type="text" 
@@ -364,7 +364,7 @@ function ProfileSection() {
             placeholder="First name" 
           />
         </div>
-        <div className="form-group mb-3" style={{ flex: 1 }}>
+        <div className="form-group mb-3">
           <label className="form-label">Last Name</label>
           <input 
             type="text" 
@@ -390,14 +390,14 @@ function ProfileSection() {
       </div>
 
       <div className="form-row">
-        <div className="form-group mb-3" style={{ flex: 1, marginRight: '12px' }}>
+        <div className="form-group mb-3">
           <label className="form-label">Role</label>
           <select className="form-control" name="role" value={formData.role} onChange={handleChange}>
             <option>Admin</option>
             <option>Member</option>
           </select>
         </div>
-        <div className="form-group mb-3" style={{ flex: 1 }}>
+        <div className="form-group mb-3">
           <label className="form-label">Timezone</label>
           <select className="form-control" name="timezone" value={formData.timezone} onChange={handleChange}>
             <option>UTC</option>
@@ -408,7 +408,7 @@ function ProfileSection() {
         </div>
       </div>
 
-      <button className="btn btn-primary btn-dark mt-2" onClick={handleSave}>
+      <button className="btn btn-dark mt-2" onClick={handleSave}>
         Save Changes
       </button>
     </div>
@@ -466,7 +466,7 @@ function NotificationsSection() {
         {toggleOption('weeklySummary')}
       </div>
 
-      <button className="btn btn-primary btn-dark mt-4">
+      <button className="btn btn-dark mt-4">
         Save Preferences
       </button>
     </div>
@@ -567,7 +567,7 @@ function AppearanceSection() {
         </div>
       </div>
 
-      <button className="btn btn-primary btn-dark mt-4" onClick={handleSaveAppearance}>
+      <button className="btn btn-dark mt-4" onClick={handleSaveAppearance}>
         Save Appearance
       </button>
     </div>
@@ -575,9 +575,8 @@ function AppearanceSection() {
 }
 
 // ============ Security Section ============
-function SecuritySection() {
+function SecuritySection({ apiBase }) {
   const [passwords, setPasswords] = useState({
-    currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   })
@@ -585,81 +584,175 @@ function SecuritySection() {
   const [passwordError, setPasswordError] = useState('')
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false)
 
+  // OTP / verification flow states
+  const [otp, setOtp] = useState(['','','','','',''])
+  const [otpError, setOtpError] = useState('')
+  const [sendingCode, setSendingCode] = useState(false)
+  const [verified, setVerified] = useState(false)
+  const [pendingUserId, setPendingUserId] = useState(null)
+  const [codeSentMsg, setCodeSentMsg] = useState('')
+
+  const user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || 'null') : null
+  const userEmail = user?.email || ''
+
   const handlePasswordChange = (e) => {
     const { name, value } = e.target
     setPasswords(prev => ({ ...prev, [name]: value }))
     setPasswordError('')
   }
 
-  const handleUpdatePassword = () => {
-    if (!passwords.currentPassword || !passwords.newPassword || !passwords.confirmPassword) {
-      setPasswordError('All fields are required')
-      return
-    }
+  function handleOtpChange(i, v){
+    if(!/^[0-9]?$/.test(v)) return
+    const next = [...otp]; next[i]=v; setOtp(next)
+    if(v && i<5){ const nextEl = document.getElementById('sec-otp-'+(i+1)); if(nextEl) nextEl.focus() }
+  }
 
-    if (passwords.newPassword !== passwords.confirmPassword) {
-      setPasswordError('New password and confirm password do not match')
-      return
-    }
+  function clearOtp(i){ const next=[...otp]; next[i]=''; setOtp(next); const el = document.getElementById('sec-otp-'+i); if(el) el.focus() }
 
-    if (passwords.newPassword.length < 8) {
-      setPasswordError('New password must be at least 8 characters')
-      return
-    }
+  async function sendVerificationCode(){
+    setOtpError(''); setCodeSentMsg('');
+    if(!userEmail) return setOtpError('No email configured for your account')
+    setSendingCode(true)
+    try{
+      const res = await fetch(`${apiBase}/api/auth/forgot-password`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: userEmail }) })
+      const body = await res.json()
+      if(!res.ok) throw new Error(body.message || 'Failed to send code')
+      setPendingUserId(body.userId || (user && user.id))
+      setCodeSentMsg('Verification code sent to ' + (body.email || userEmail))
+    }catch(err){ setOtpError(err.message) }
+    setSendingCode(false)
+  }
 
-    console.log('Password updated')
+  async function verifyCode(){
+    setOtpError('')
+    const joined = otp.join('')
+    if(joined.length!==6) return setOtpError('Enter full 6-digit code')
+    try{
+      const res = await fetch(`${apiBase}/api/auth/verify-otp`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId: pendingUserId || (user && user.id), code: joined }) })
+      const body = await res.json()
+      if(!res.ok) throw new Error(body.message || 'Verification failed')
+      setVerified(true)
+    }catch(err){ setOtpError(err.message) }
+  }
+
+  async function handleUpdatePassword(){
     setPasswordError('')
-    alert('Password updated successfully!')
-    setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' })
+    if(!verified) return setPasswordError('Please verify your email before changing password')
+    if (!passwords.newPassword || !passwords.confirmPassword) return setPasswordError('All fields are required')
+    if (passwords.newPassword !== passwords.confirmPassword) return setPasswordError('New password and confirm password do not match')
+    if (passwords.newPassword.length < 8) return setPasswordError('New password must be at least 8 characters')
+    // additional strength checks (optional)
+    const missing = []
+    if (!/[A-Z]/.test(passwords.newPassword)) missing.push('one uppercase letter')
+    if (!/[a-z]/.test(passwords.newPassword)) missing.push('one lowercase letter')
+    if (!/\d/.test(passwords.newPassword)) missing.push('one digit')
+    if (!/[^A-Za-z0-9]/.test(passwords.newPassword)) missing.push('one special character')
+    if (missing.length) return setPasswordError('Password must contain at least: ' + missing.join(', '))
+
+    try{
+      const res = await fetch(`${apiBase}/api/auth/reset-password`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId: pendingUserId || (user && user.id), code: otp.join(''), newPassword: passwords.newPassword }) })
+      const body = await res.json()
+      if(!res.ok) throw new Error(body.message || 'Password change failed')
+      alert('Password updated successfully')
+      setPasswords({ newPassword:'', confirmPassword:'' })
+      setOtp(['','','','','','']); setVerified(false); setCodeSentMsg('')
+    }catch(err){ setPasswordError(err.message) }
   }
 
-  const handleToggle2FA = () => {
-    setTwoFactorEnabled(!twoFactorEnabled)
-  }
+  const handleToggle2FA = () => { setTwoFactorEnabled(!twoFactorEnabled) }
+
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   return (
     <div>
-      {/* Change Password Card */}
+      {/* Change Password Card (email verification flow) */}
       <div className="settings-card mb-4">
         <div className="card-header">
           <h2>Change Password</h2>
-          <p className="text-muted">Update your account password</p>
+          <p className="text-muted">We'll send a verification code to your email before allowing password change</p>
         </div>
 
-        <div className="form-group mb-3">
-          <label className="form-label">Current Password</label>
-          <input 
-            type="password" 
-            className="form-control"
-            name="currentPassword"
-            value={passwords.currentPassword}
-            onChange={handlePasswordChange}
-            placeholder="Enter your current password"
-          />
+        <div className="mb-3">
+          <label className="form-label">Email</label>
+          <input type="email" className="form-control" value={userEmail} readOnly />
         </div>
 
-        <div className="form-group mb-3">
+        <div className="mb-3 d-flex align-items-center verify-row">
+          <button type="button" className="btn verify-btn" onClick={sendVerificationCode} disabled={sendingCode}>{sendingCode ? 'Sending...' : 'Send verification code'}</button>
+          {codeSentMsg && <div className="code-sent-msg">{codeSentMsg}</div>}
+        </div>
+
+        {otpError && <div className="alert alert-danger">{otpError}</div>}
+
+        <div className="otp-row">
+          {otp.map((c,i)=> (
+            <div key={i} className="otp-box-wrap">
+              <input id={'sec-otp-'+i} className="otp-box" maxLength={1} value={c} onChange={e=>handleOtpChange(i,e.target.value)} />
+              <button type="button" className="otp-clear" onClick={()=>clearOtp(i)} aria-label={`clear-${i}`}>x</button>
+            </div>
+          ))}
+        </div>
+
+        <div className="verify-code-row">
+          <button type="button" className="verify-btn" onClick={verifyCode} disabled={verified}>Verify code</button>
+          {verified && <span className="verified-badge">Verified</span>}
+        </div>
+
+        <div className="form-group mb-3 new-password-group">
           <label className="form-label">New Password</label>
-          <input 
-            type="password" 
-            className="form-control"
-            name="newPassword"
-            value={passwords.newPassword}
-            onChange={handlePasswordChange}
-            placeholder="Enter your new password"
-          />
+          <div className="password-wrapper">
+            <input
+              type={showNewPassword ? 'text' : 'password'}
+              className="form-control"
+              name="newPassword"
+              value={passwords.newPassword}
+              onChange={handlePasswordChange}
+              placeholder="Enter your new password"
+              disabled={!verified}
+            />
+            <button type="button" className="password-toggle" onClick={() => setShowNewPassword(s => !s)} aria-label={showNewPassword ? 'Hide password' : 'Show password'}>
+              {showNewPassword ? (
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M17.94 17.94A10.97 10.97 0 0 1 12 20c-6 0-10-5.5-10-8 1.27-2.2 4.29-5 8.46-6.18" strokeLinecap="round" strokeLinejoin="round"></path>
+                  <path d="M1 1l22 22" strokeLinecap="round" strokeLinejoin="round"></path>
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" strokeLinecap="round" strokeLinejoin="round"></path>
+                  <circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round"></circle>
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
 
         <div className="form-group mb-3">
           <label className="form-label">Confirm New Password</label>
-          <input 
-            type="password" 
-            className="form-control"
-            name="confirmPassword"
-            value={passwords.confirmPassword}
-            onChange={handlePasswordChange}
-            placeholder="Confirm your new password"
-          />
+          <div className="password-wrapper">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              className="form-control"
+              name="confirmPassword"
+              value={passwords.confirmPassword}
+              onChange={handlePasswordChange}
+              placeholder="Confirm your new password"
+              disabled={!verified}
+            />
+            <button type="button" className="password-toggle" onClick={() => setShowConfirmPassword(s => !s)} aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}>
+              {showConfirmPassword ? (
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M17.94 17.94A10.97 10.97 0 0 1 12 20c-6 0-10-5.5-10-8 1.27-2.2 4.29-5 8.46-6.18" strokeLinecap="round" strokeLinejoin="round"></path>
+                  <path d="M1 1l22 22" strokeLinecap="round" strokeLinejoin="round"></path>
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" strokeLinecap="round" strokeLinejoin="round"></path>
+                  <circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round"></circle>
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
 
         {passwordError && (
@@ -669,8 +762,9 @@ function SecuritySection() {
         )}
 
         <button 
-          className="btn btn-primary btn-dark mt-2"
+          className="btn btn-dark mt-2"
           onClick={handleUpdatePassword}
+          disabled={!verified}
         >
           Update Password
         </button>
@@ -706,10 +800,9 @@ function SecuritySection() {
             </div>
 
             <button 
-              className="btn btn-primary btn-dark mt-4"
+              className="btn btn-dark mt-4"
               onClick={() => {
                 alert('2FA has been enabled!')
-                setTwoFactorEnabled(false)
               }}
             >
               Confirm and Enable 2FA
@@ -719,7 +812,7 @@ function SecuritySection() {
 
         {!twoFactorEnabled && (
           <button 
-            className="btn btn-primary btn-dark"
+            className="btn btn-dark"
             onClick={handleToggle2FA}
           >
             Enable 2FA
