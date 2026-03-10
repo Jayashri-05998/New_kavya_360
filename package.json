@@ -1,0 +1,30 @@
+{
+  "name": "kavyaproman300",
+  "version": "1.0.0",
+  "description": "KavyaProMan360 - Project Management Platform",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "start": "bash start.sh",
+    "start:backend": "cd backend && ./mvnw spring-boot:run -Dspring-boot.run.arguments='--spring.profiles.active=prod'",
+    "start:frontend": "cd frontend && npm install && npm run build && npx serve -s dist -l 3000",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && ./mvnw clean package -DskipTests -Dspring.profiles.active=prod",
+    "build:frontend": "cd frontend && npm install && npm run build"
+  },
+  "keywords": [
+    "project-management",
+    "agile",
+    "spring-boot",
+    "react",
+    "railway"
+  ],
+  "author": "Team1",
+  "license": "MIT",
+  "dependencies": {
+    "serve": "^14.2.0"
+  }
+}

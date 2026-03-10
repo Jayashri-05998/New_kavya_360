@@ -45,11 +45,7 @@
   background: #f3f4f6;
 }
 
-.project-top-strip .bell-black::after {
-  box-shadow: 0 0 0 2px #f8f9fb;
-  right: 8px;
-  top: 7px;
-}
+.project-top-strip .bell-black::after { content:none !important; display:none !important; }
 
 .projects-shell {
   width: 100%;

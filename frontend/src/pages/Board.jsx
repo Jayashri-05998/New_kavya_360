@@ -146,6 +146,7 @@ export default function Board() {
     return () => window.removeEventListener('org:changed', onOrgChanged)
   }, [])
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const createEmptyFilters = () => ({
     status: [],
     type: [],
@@ -257,6 +258,16 @@ export default function Board() {
     setNotifications((current) => current.map((item) => ({ ...item, read: true })))
   }
 
+  function toggleSidebarForScreen() {
+    setCollapsed((prev) => {
+      const next = !prev
+      if (typeof window !== 'undefined' && window.innerWidth < 992) {
+        setMobileOpen(!next)
+      }
+      return next
+    })
+  }
+
   function formatTypeLabel(type) {
     if (!type) return ''
     return type.charAt(0).toUpperCase() + type.slice(1)
@@ -264,7 +275,7 @@ export default function Board() {
 
   return (
     <div className="board-page-root dashboard-root d-flex">
-      <aside className={`sidebar d-flex flex-column ${collapsed ? 'collapsed' : ''}`}>
+      <aside className={`sidebar d-flex flex-column ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'open' : ''}`}>
         <div className="sidebar-top">
           <div className="brand d-flex align-items-center">
             <div className="brand-logo">KP</div>
@@ -338,9 +349,11 @@ export default function Board() {
         </div>
       )}
 
-      <button className="mobile-toggle btn btn-sm" aria-label="Toggle sidebar">
+      <button className="mobile-toggle btn btn-sm" onClick={toggleSidebarForScreen} aria-label="Toggle sidebar">
         <FiMenu size={18} />
       </button>
+
+      <div className={`mobile-overlay ${mobileOpen ? 'show' : ''}`} onClick={() => { setMobileOpen(false); setCollapsed(true) }} />
 
       <main className={`content board-content flex-grow-1 p-4 ${collapsed ? 'with-topbar' : ''}`}>
         <header className="board-top-strip">

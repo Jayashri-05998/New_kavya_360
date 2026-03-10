@@ -248,11 +248,13 @@ export default function Project() {
   }
 
   function toggleSidebarForScreen() {
-    if (typeof window !== 'undefined' && window.innerWidth >= 992) {
-      setCollapsed((value) => !value)
-    } else {
-      setMobileOpen((value) => !value)
-    }
+    setCollapsed((prev) => {
+      const next = !prev
+      if (typeof window !== 'undefined' && window.innerWidth < 992) {
+        setMobileOpen(!next)
+      }
+      return next
+    })
   }
 
   function isMobileScreen() {
@@ -566,11 +568,6 @@ export default function Project() {
         </div>
       </aside>
 
-      {/* mobile toggle button (delegated to global SidebarController) */}
-      <button className="mobile-toggle btn btn-sm" aria-label="Toggle sidebar">
-        <FiMenu size={18} />
-      </button>
-
       {collapsed && (
         <div className="topbar d-flex align-items-center px-3">
           <div className="d-flex align-items-center">
@@ -589,7 +586,7 @@ export default function Project() {
         <FiMenu size={18} />
       </button>
 
-      <div className={`mobile-overlay ${mobileOpen ? 'show' : ''}`} onClick={() => setMobileOpen(false)} />
+      <div className={`mobile-overlay ${mobileOpen ? 'show' : ''}`} onClick={() => { setMobileOpen(false); setCollapsed(true) }} />
 
       <main className={`content project-content flex-grow-1 p-4 ${collapsed ? 'with-topbar' : ''}`}>
         <header className="project-top-strip">
